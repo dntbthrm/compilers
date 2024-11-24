@@ -57,14 +57,15 @@ printer_argument
 
 // выражения
 expression
-     : expression (PLUS | MINUS | MULT | DIV | MOD | POW) expression
-     | expression (AND | OR) expression
-     | NOT expression
-     | L_ROUND expression R_ROUND
-     | ID
-     | NUMBER
-     | TRUE
-     | FALSE
+     : expression (PLUS | MINUS | MULT | DIV | MOD | POW) expression    
+     | expression (LESS | LEQ | GREATER | GEQ | EQ | NEQ) expression    
+     | expression (AND | OR) expression                                
+     | NOT expression                                                  
+     | L_ROUND expression R_ROUND                                      
+     | ID                                                              
+     | NUMBER                                                          
+     | TRUE                                                            
+     | FALSE                                                           
      ;
 
 // токены
@@ -94,6 +95,14 @@ POW     : '^';
 AND     : '&&';
 OR      : '||';
 NOT     : '!';
+
+// операторы сравнения
+LESS     : '<';     
+LEQ      : '<=';    
+GREATER  : '>';     
+GEQ      : '>=';    
+EQ       : '==';    
+NEQ      : '!=';    
 
 // скобки и разделители
 L_ROUND  : '(';
