@@ -42,12 +42,12 @@ f_block
 	: L_SQ statement* R_SQ
 	;
 
-// вывод в консоль (строки, числа, переменные, булевы значения)
+// вывод в консоль (поддерживает строки, числа, переменные, булевы значения)
 printer
 	: PRINTER L_ROUND printer_argument (COMMA printer_argument)* R_ROUND ENDLINE
 	;
 
-// Аргументы для printer
+// аргументы для printer
 printer_argument
 	: STRING
 	| ID
@@ -57,15 +57,14 @@ printer_argument
 
 // выражения
 expression
-     : expression (PLUS | MINUS | MULT | DIV | MOD | POW) expression    
+     : expression (PLUS | MINUS | MULT | DIV | MOD | POW) expression   
      | expression (LESS | LEQ | GREATER | GEQ | EQ | NEQ) expression    
      | expression (AND | OR) expression                                
      | NOT expression                                                  
      | L_ROUND expression R_ROUND                                      
      | ID                                                              
      | NUMBER                                                          
-     | TRUE                                                            
-     | FALSE                                                           
+     | BOOL_VALUE                                                                                                                     
      ;
 
 // токены
@@ -81,8 +80,6 @@ PRINTER : 'printer';
 // типы данных
 INT     : 'integer';
 BOOL    : 'boolean';
-TRUE    : 'true';
-FALSE   : 'false';
 
 // операторы
 ASSIGN  : '=';
@@ -97,12 +94,12 @@ OR      : '||';
 NOT     : '!';
 
 // операторы сравнения
-LESS     : '<';     
-LEQ      : '<=';    
-GREATER  : '>';     
+LESS     : '<';   
+LEQ      : '<=';   
+GREATER  : '>';   
 GEQ      : '>=';    
-EQ       : '==';    
-NEQ      : '!=';    
+EQ       : '==';   
+NEQ      : '!=';   
 
 // скобки и разделители
 L_ROUND  : '(';
@@ -118,8 +115,8 @@ COMMENT : '/*' .*? '*/' -> skip;
 // идентификаторы, строки и числа
 ID      : [a-zA-Z_][a-zA-Z0-9_]*;
 NUMBER  : [0-9]+;
-STRING  : '"' (~["])* '"'; 
-BOOL_VALUE : 'true' | 'false';
+STRING  : '"' (~["])* '"';
+BOOL_VALUE : 'true' | 'false'; 
 
 // пробелы и переносы строк
 WS      : [ \t\r\n]+ -> skip;
