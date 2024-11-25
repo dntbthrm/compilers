@@ -36,8 +36,7 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
 
     @Override 
     public String visitStatement(custom_grammarParser.StatementContext ctx) { 
-        // куча ифов с посещениями
-        
+
         if (ctx.var_decl() != null){
             //System.out.println("Its' vardecl");
             visitVar_decl(ctx.var_decl());
@@ -137,8 +136,9 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
             final_code.append("#else\n");
             current_reg = reg_cnt + 1;
             final_code.append(String.format("jal x0, %s\n", else_label));
+        } else {
+            final_code.append(String.format("jal x0, %s\n", end_label));
         }
-
         // код блока if
         final_code.append(if_label+":\n");
         visitF_block(ctx.f_block(blocks));
@@ -162,13 +162,12 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
             blocks += 1;
             final_code.append(String.format("jal x0, %s\n", end_label));
         } 
+
         // конец if-elif-else
         final_code.append(String.format("%s:\n", end_label));
         current_reg = reg_cnt + 1;
 
         return null;
-
-
     }
 
     // ГОТОВО
@@ -280,7 +279,7 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
     }
     @Override
     public String visitExpression(custom_grammarParser.ExpressionContext ctx) {
-        if (ctx.NUMBER() != null) {
+        if (ctx.NUMBER() != null)  {
             // число
             int reg = current_reg;
             if (!var_reg.values().contains(reg)) {
@@ -302,10 +301,16 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
             return String.valueOf(reg);
         } else if (ctx.BOOL_VALUE() != null) {
             // логическое
-            int reg = current_reg++;
-            int value = ctx.BOOL_VALUE().getText().equals("true") ? 1 : 0;
-            final_code.append(String.format("li x%d, %d\n", reg, value));
-            return String.valueOf(reg);
+            int reg = current_reg;
+            int value = ctx.BOOL_VALUE().getText().equals("(true)") ? 1 : 0;
+            if (!var_reg.values().contains(reg)) {
+                reg = current_reg++;
+                value = ctx.BOOL_VALUE().getText().equals("(true)") ? 1 : 0;
+                final_code.append(String.format("li x%d, %d\n", reg, value));
+                return String.valueOf(reg);
+            }
+            
+            return String.valueOf(value);
         } else if (ctx.NOT() != null) {
             // отрицание
             int exprReg = Integer.parseInt(visitExpression(ctx.expression(0)));

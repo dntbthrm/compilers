@@ -1,0 +1,7 @@
+integer x = 10;
+integer y; 
+integer z;
+y = 30 - (x + 3) * 2;
+printer ("Значение y: ", y, " ");
+z = y % 3;
+printer ("Остаток от деления y на 3: ", z); 

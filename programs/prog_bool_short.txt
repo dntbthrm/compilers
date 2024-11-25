@@ -1,0 +1,16 @@
+boolean a = (true);
+boolean b = (false);
+boolean c = (true);
+boolean d;
+printer(c, "; ");
+/*** NOT (FALSE OR TRUE) = FALSE***/
+c = !(b || a);
+printer(c, "; ");
+
+/**** false OR ****
+**** NOT false AND true ****
+***** = true; *****/
+d = b || !c && a;
+printer(d, "; ");
+
+

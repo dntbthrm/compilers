@@ -58,15 +58,16 @@ printer_argument
 
 // выражения
 expression
-     : expression (MULT | DIV | MOD) expression
-	 | expression (PLUS | MINUS) expression   
-     | expression (LESS | GEQ | EQ | NEQ) expression    
-     | expression (AND | OR) expression                                
-     | NOT expression                                                  
-     | L_ROUND expression R_ROUND                                      
+     : NOT expression 
+	 | L_ROUND expression R_ROUND
+	 | expression (MULT | DIV | MOD) expression
+	 | expression AND expression 
+	 | expression (PLUS | MINUS) expression
+	 | expression OR expression  
+     | expression (LESS | GEQ | EQ | NEQ) expression
+	 | BOOL_VALUE                                                                                         
      | ID                                                              
-     | NUMBER                                                          
-     | BOOL_VALUE                                                                                                                     
+     | NUMBER                                                                                                                                                                           
      ;
 
 comment 
@@ -119,7 +120,7 @@ COMMENT : '/*' .*? '*/';
 ID      : [a-zA-Z_][a-zA-Z0-9_]*;
 NUMBER  : [0-9]+;
 STRING  : '"' (~["])* '"';
-BOOL_VALUE : 'true' | 'false'; 
+BOOL_VALUE : '(true)' | '(false)'; 
 
 // пробелы и переносы строк
 WS      : [ \t\r\n]+ -> skip;

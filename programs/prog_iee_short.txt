@@ -1,0 +1,15 @@
+integer x = 10;
+integer y = 12;
+integer z = 0;
+if (x >= y) {
+	z = 1;
+}
+elif (x + 2 == y) {
+	z = 2;
+}
+else {
+	z = 3;
+}
+printer(z);
+
+
