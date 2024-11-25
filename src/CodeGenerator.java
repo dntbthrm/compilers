@@ -15,11 +15,12 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
         return final_code.toString();
     }
 
+    // ГОТОВО
     @Override
     public String visitProgram(custom_grammarParser.ProgramContext ctx) {
         
         for (var stat : ctx.statement()){
-            if (current_reg > 31){
+            if (current_reg > 30){
                 System.out.println("Программа не поддерживается");
                 System.exit(1);
             }
@@ -48,6 +49,9 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
         }
         else if (ctx.for_loop() != null){
             visitFor_loop(ctx.for_loop());
+        }
+        else if (ctx.printer() != null){
+            visitPrinter(ctx.printer());
         }
 
         return null;
@@ -216,7 +220,7 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
         return null;
     }
 
-    
+
     // ГОТОВО
     @Override public String visitF_block(custom_grammarParser.F_blockContext ctx) { 
         if (ctx.L_SQ() != null && ctx.R_SQ() != null){
@@ -230,8 +234,44 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
         return null;
     }
 
+    @Override 
+    public String visitPrinter(custom_grammarParser.PrinterContext ctx) 
+    { 
+        int i = 0;
+        while (ctx.printer_argument(i) != null){
+            visitPrinter_argument(ctx.printer_argument(i));
+            i ++;
+        }
+        
+        return null; 
+    }
 
-   @Override
+    @Override 
+    public String visitPrinter_argument(custom_grammarParser.Printer_argumentContext ctx) { 
+        if (ctx.STRING() != null){
+            String text_data = ctx.STRING().getText().substring(1, ctx.STRING().getText().length() - 1);
+            int[] codes = text_data.chars().toArray();
+            // для буквенных символов - последний регистр
+            for (int code : codes){
+                final_code.append(String.format("li x31, %d\n", code));
+                final_code.append(String.format("ewrite x31\n"));
+            }
+        }
+        if (ctx.NUMBER() != null){
+            String text_num = ctx.NUMBER().getText();
+            int[] codes = text_num.chars().toArray();
+            // для цифровых символов - последний регистр
+            for (int code : codes){
+                final_code.append(String.format("li x31, %d\n", code));
+                final_code.append(String.format("ewrite x31\n"));
+            }
+        }
+        if (ctx.ID() != null){
+            final_code.append(String.format("ewrite x%d\n", var_reg.get(ctx.ID().getText())));
+        }
+        return null; 
+    }
+    @Override
     public String visitExpression(custom_grammarParser.ExpressionContext ctx) {
         if (ctx.NUMBER() != null) {
             // число
