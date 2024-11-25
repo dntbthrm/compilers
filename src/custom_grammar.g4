@@ -14,7 +14,7 @@ statement
 
 // объявление переменных
 var_decl
-	: (INT | BOOL) ID ASSIGN expression ENDLINE
+	: (INT | BOOL) ID (ASSIGN expression)? ENDLINE
 	;
 
 // присваивание
@@ -24,7 +24,7 @@ assign
 
 // оператор if (с elif и else)
 if_state
-	: IF L_ROUND expression R_ROUND f_block (ELIF L_ROUND expression R_ROUND f_block)* (ELSE f_block)?
+	: IF L_ROUND expression R_ROUND f_block (ELIF L_ROUND expression R_ROUND f_block)? (ELSE f_block)?
 	;
 
 // цикл while 
@@ -57,8 +57,9 @@ printer_argument
 
 // выражения
 expression
-     : expression (PLUS | MINUS | MULT | DIV | MOD | POW) expression   
-     | expression (LESS | LEQ | GREATER | GEQ | EQ | NEQ) expression    
+     : expression (MULT | DIV | MOD) expression
+	 | expression (PLUS | MINUS) expression   
+     | expression (LESS | GEQ | EQ | NEQ) expression    
      | expression (AND | OR) expression                                
      | NOT expression                                                  
      | L_ROUND expression R_ROUND                                      
@@ -88,15 +89,12 @@ MINUS   : '-';
 MULT    : '*';
 DIV     : '/';
 MOD     : '%';
-POW     : '^';
 AND     : '&&';
 OR      : '||';
 NOT     : '!';
 
 // операторы сравнения
-LESS     : '<';   
-LEQ      : '<=';   
-GREATER  : '>';   
+LESS     : '<';      
 GEQ      : '>=';    
 EQ       : '==';   
 NEQ      : '!=';   
