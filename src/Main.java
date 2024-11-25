@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        InputStream inpStream = new FileInputStream("../programs/prog2.txt");
+        InputStream inpStream = new FileInputStream("../programs/prog3.txt");
         ANTLRInputStream input = new ANTLRInputStream(inpStream);
         custom_grammarLexer lexer = new custom_grammarLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

@@ -41,8 +41,13 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
             visitIf_state(ctx.if_state());
         }
         else if (ctx.assign() != null){
-
             visitAssign(ctx.assign());
+        }
+        else if (ctx.while_loop() != null){
+            visitWhile_loop(ctx.while_loop());
+        }
+        else if (ctx.for_loop() != null){
+            visitFor_loop(ctx.for_loop());
         }
 
         return null;
@@ -155,6 +160,63 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
 
     }
 
+    // ГОТОВО
+    @Override 
+    public String visitWhile_loop(custom_grammarParser.While_loopContext ctx) 
+    { 
+        // метки 
+        String while_label = "label" + label_cnt++;
+        String end_label = "label" + label_cnt++;
+        final_code.append("#while\n"); 
+        // условие цикла
+        current_reg = reg_cnt + 1;
+        visitExpression(ctx.expression());
+        final_code.append(String.format("bne x%d, x0, %s\n", current_reg - 1, while_label));
+        
+        // код блока
+        final_code.append(while_label+":\n");
+        visitF_block(ctx.f_block());
+        visitExpression(ctx.expression());
+        final_code.append(String.format("beq x%d, x0, %s\n", current_reg - 1, end_label));
+        final_code.append(String.format("jal x0, %s\n", while_label));
+
+        final_code.append(String.format("%s:\n", end_label));
+        current_reg = reg_cnt + 1;
+
+        return null;
+    }
+
+    // ГОТОВО
+    @Override public String visitFor_loop(custom_grammarParser.For_loopContext ctx) { 
+        // метки 
+        String for_label = "label" + label_cnt++;
+        String end_label = "label" + label_cnt++;
+        final_code.append("#for\n"); 
+
+        visitAssign(ctx.assign(0));
+        visitExpression(ctx.expression());
+        final_code.append(String.format("bne x%d, x0, %s\n", current_reg - 1, for_label));
+
+        // код блока
+        final_code.append(for_label+":\n");
+        visitF_block(ctx.f_block());
+
+        // шаг цикла
+        visitAssign(ctx.assign(1));
+
+        // проверка условия
+        visitExpression(ctx.expression());
+        final_code.append(String.format("beq x%d, x0, %s\n", current_reg - 1, end_label));
+
+        
+        final_code.append(String.format("jal x0, %s\n", for_label));
+        
+        final_code.append(String.format("%s:\n", end_label));
+        current_reg = reg_cnt + 1;
+        return null;
+    }
+
+    
     // ГОТОВО
     @Override public String visitF_block(custom_grammarParser.F_blockContext ctx) { 
         if (ctx.L_SQ() != null && ctx.R_SQ() != null){
