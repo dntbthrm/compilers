@@ -10,6 +10,7 @@ statement
 	| while_loop
 	| for_loop
 	| printer
+	| comment
 	;
 
 // объявление переменных
@@ -68,6 +69,10 @@ expression
      | BOOL_VALUE                                                                                                                     
      ;
 
+comment 
+	: COMMENT
+	;
+
 // токены
 
 // ключевые слова
@@ -108,7 +113,7 @@ ENDLINE  : ';';
 COMMA    : ',';
 
 // многострочные комментарии
-COMMENT : '/*' .*? '*/' -> skip;
+COMMENT : '/*' .*? '*/';
 
 // идентификаторы, строки и числа
 ID      : [a-zA-Z_][a-zA-Z0-9_]*;

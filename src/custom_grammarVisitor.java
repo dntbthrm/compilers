@@ -75,4 +75,10 @@ public interface custom_grammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpression(custom_grammarParser.ExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link custom_grammarParser#comment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitComment(custom_grammarParser.CommentContext ctx);
 }

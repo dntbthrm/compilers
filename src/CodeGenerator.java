@@ -3,6 +3,10 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import java.util.HashMap;
 import java.util.Map;
 
+// для комментов
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class CodeGenerator extends custom_grammarBaseVisitor<String> {
     StringBuilder final_code = new StringBuilder();
     int reg_cnt = 1;
@@ -52,6 +56,9 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
         }
         else if (ctx.printer() != null){
             visitPrinter(ctx.printer());
+        }
+        else if (ctx.comment() != null){
+            visitComment(ctx.comment());
         }
 
         return null;
@@ -358,6 +365,35 @@ public class CodeGenerator extends custom_grammarBaseVisitor<String> {
             return String.valueOf(reg);
         }
         throw new UnsupportedOperationException("Неизвестное выражение.");
+    }
+
+    // ГОТОВО
+    @Override 
+    public String visitComment(custom_grammarParser.CommentContext ctx) { 
+        //System.out.println(ctx.COMMENT().getText());
+        Pattern comment_regex = Pattern.compile("/\\*+\\s*(.*?)\\s*\\*+/", Pattern.DOTALL);
+        Matcher matcher = comment_regex.matcher(ctx.COMMENT().getText());
+
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            String comment = matcher.group(1).trim();
+
+            String[] lines = comment.split("\\R");
+
+            StringBuilder ready_comment = new StringBuilder();
+            for (String line : lines) {
+                String cleaned = line.replaceAll("^\\*+|\\*+$", "").trim();
+                ready_comment.append("#").append(cleaned).append("\n");
+            }
+
+            matcher.appendReplacement(result, ready_comment.toString().trim());
+        }
+
+        matcher.appendTail(result);
+
+        final_code.append(result.toString() + "\n");
+        return null;
     }
 
 
